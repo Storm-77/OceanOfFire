@@ -1,3 +1,5 @@
+import { VertexBuffer } from "./core/buffer.js";
+import { Init } from "./core/setup.js";
 
 window.addEventListener("load", async () => {
 
@@ -7,19 +9,26 @@ window.addEventListener("load", async () => {
     const result = await response.json();
     console.log(result)
 
+    Init();
 
-    const canvas = document.querySelector("#canvas") as HTMLCanvasElement;
-    const ctx = canvas.getContext("2d")!;
+    // const vb = new VertexBuffer();
+    //
+    // vb.UploadData(
+    //
+    //     // Positions
+    //     [
+    //         -0.5, -0.5,  // Bottom left
+    //         0.5, -0.5,  // Bottom right
+    //         0.0, 0.5   // Top
+    //     ]
+    // )
 
-    ctx.strokeStyle = 'red';
-    
-    ctx.moveTo(0, 0);
-    ctx.lineTo(1280, 720);
 
 
-    ctx.moveTo(1280, 0);
-    ctx.lineTo(0, 720);
 
-    ctx.stroke();
 
 })
+export const testFunction = () => {
+    console.log("This is a core test");
+};
+
