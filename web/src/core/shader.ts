@@ -24,9 +24,21 @@ export class Shader {
         gl.shaderSource(vertexShaderId, VertexSrc);
         gl.compileShader(vertexShaderId);
 
+        const success_vertex = gl.getShaderParameter(vertexShaderId, gl.COMPILE_STATUS);
+        if (!success_vertex) {
+            const errorLog = gl.getShaderInfoLog(vertexShaderId);
+            console.error('Shader compilation failed:', errorLog);
+        }
+
         let fragmentShaderId = gl.createShader(gl.FRAGMENT_SHADER)!;
         gl.shaderSource(fragmentShaderId, FragmentSrc);
         gl.compileShader(fragmentShaderId);
+
+        const success_fragment = gl.getShaderParameter(fragmentShaderId, gl.COMPILE_STATUS);
+        if (!success_fragment) {
+            const errorLog = gl.getShaderInfoLog(fragmentShaderId);
+            console.error('Shader compilation failed:', errorLog);
+        }
 
         gl.attachShader(this.m_programId, vertexShaderId);
         gl.attachShader(this.m_programId, fragmentShaderId);
@@ -40,9 +52,7 @@ export class Shader {
     }
 
     public Bind(): void {
-
         gl.useProgram(this.m_programId);
-
     }
 
     public Kill(): void {
@@ -76,6 +86,6 @@ export class Shader {
         return gl.getAttribLocation(this.m_programId, name);
     }
 
-    //todo add deletnion afterwords
+    //todo add deletnion afterwards
 
 }

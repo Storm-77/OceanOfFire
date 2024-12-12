@@ -1,4 +1,4 @@
-import { gl, Init } from "./setup.js"
+import { gl } from "./setup.js"
 
 export enum LayoutAttribute {
     none = 0,
@@ -8,23 +8,51 @@ export enum LayoutAttribute {
     vec4f
 }
 
-const AttribCompomentCount = new Map<LayoutAttribute, number>([
-    [LayoutAttribute.vec1f, 1],
-    [LayoutAttribute.vec2f, 2],
-    [LayoutAttribute.vec3f, 3],
-    [LayoutAttribute.vec4f, 4],
-]);
+export type WebGlDataFormat = number;
 
-const AttribType = new Map<LayoutAttribute, number>([
-    [LayoutAttribute.vec1f, gl.FLOAT],
-    [LayoutAttribute.vec2f, gl.FLOAT],
-    [LayoutAttribute.vec3f, gl.FLOAT],
-    [LayoutAttribute.vec4f, gl.FLOAT],
-]);
+const helper = {
 
-const SizeOfType = new Map<number, number>([
-    [gl.FLOAT, 4]
-]);
+    getAttribType: function(attrib: LayoutAttribute): WebGlDataFormat {
+        const attribTypes = new Map<LayoutAttribute, number>([
+            [LayoutAttribute.vec1f, gl.FLOAT],
+            [LayoutAttribute.vec2f, gl.FLOAT],
+            [LayoutAttribute.vec3f, gl.FLOAT],
+            [LayoutAttribute.vec4f, gl.FLOAT],
+        ]);
+        if (!attribTypes.has(attrib)) {
+            throw new Error("Invalid opengl data attribute")
+        }
+        return attribTypes.get(attrib)!;
+    },
+
+    getSizeOfType: function(type: WebGlDataFormat): number {
+
+        const sizeOfType = new Map<number, number>([
+            [gl.FLOAT, 4]
+        ]);
+
+        if (!sizeOfType.has(type)) {
+            throw new Error("Unsupported opengl data type")
+        }
+        return sizeOfType.get(type)!;
+
+    },
+    getAttribComponentCount: function(attrib: LayoutAttribute): number {
+        const attribComponentCount = new Map<LayoutAttribute, number>([
+            [LayoutAttribute.vec1f, 1],
+            [LayoutAttribute.vec2f, 2],
+            [LayoutAttribute.vec3f, 3],
+            [LayoutAttribute.vec4f, 4],
+        ]);
+        if (!attribComponentCount.has(attrib)) {
+            throw new Error("Unsupported attribute type")
+        }
+        return attribComponentCount.get(attrib)!;
+    }
+
+
+}
+
 
 class VertexLayout {
 
@@ -32,8 +60,6 @@ class VertexLayout {
 
     constructor() {
         //todo use vertex array
-        Init();
-        console.log(gl)
     }
 
     public Add(att: LayoutAttribute) {
@@ -44,16 +70,16 @@ class VertexLayout {
 
         let vertexSize = 0;
         this.attribs.forEach(atr => {
-            vertexSize += AttribCompomentCount.get(atr)! * SizeOfType.get(AttribType.get(atr)!)!;
+            vertexSize += helper.getAttribComponentCount(atr) * helper.getSizeOfType(helper.getAttribType(atr));
         });
 
         let offset = 0;
         for (let idx = startIdx; idx < this.attribs.length + startIdx; idx++) {
             const el = this.attribs[idx - startIdx];
-            const compomentCount = AttribCompomentCount.get(el)!;
-            const type = AttribType.get(el)!;
-            gl.vertexAttribPointer(idx, compomentCount, type, false, vertexSize, offset);
-            offset += compomentCount! * SizeOfType.get(type)!;
+            const componentCount = helper.getAttribComponentCount(el);
+            const type = helper.getAttribType(el);
+            gl.vertexAttribPointer(idx, componentCount, type, false, vertexSize, offset);
+            offset += componentCount * helper.getSizeOfType(type);
             gl.enableVertexAttribArray(idx);
         }
     }

@@ -24,6 +24,6 @@ export function Init() {
 
     gl = _gl;
     is_initialized = true;
-    console.log("INITIALIZATION !@#")
+    console.log("OpenGL initialized successfully")
 
 }
