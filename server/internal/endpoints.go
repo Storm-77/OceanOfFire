@@ -1,7 +1,6 @@
-package main
+package endpoints
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -16,14 +15,14 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func setCORSHeaders(w http.ResponseWriter) {
+func SetCORSHeaders(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 }
 
 func handleWebSocket(w http.ResponseWriter, r *http.Request) {
-	setCORSHeaders(w)
+	SetCORSHeaders(w)
 
 	// Upgrade the connection to a WebSocket
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -56,21 +55,8 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Client disconnected")
 }
 
-func handleRoot(w http.ResponseWriter, r *http.Request) {
-	setCORSHeaders(w)
-	response := map[string]string{"message": "hello from server"}
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(response)
-}
-
-func main() {
+func SetupEndpoints() {
 
 	http.HandleFunc("/ws", handleWebSocket)
-	http.HandleFunc("/", handleRoot)
-
-	fmt.Println("Starting server on :8080")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		fmt.Println("Error starting server:", err)
-	}
 
 }
