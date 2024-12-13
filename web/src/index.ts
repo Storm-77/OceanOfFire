@@ -1,7 +1,8 @@
-import { IndexBuffer, LayoutAttribute, VertexBuffer } from "./core/buffer.js";
+import { IndexBuffer, VertexBuffer } from "./core/buffer.js";
 import { RendererCommands } from "./core/render_commands.js";
 import { gl, Init } from "./core/setup.js";
 import { Shader } from "./core/shader.js";
+import { LayoutAttribute, VertexArray } from "./core/vertex_array.js";
 
 const vertexSource = `
     #define GLSLIFY 1
@@ -38,9 +39,10 @@ window.addEventListener("load", async () => {
 
     Init();
 
-    const vb = new VertexBuffer();
 
-    vb.UploadData(
+    const va = new VertexArray();
+
+    va.Buffer.UploadData(
 
         // Positions
         [
@@ -58,8 +60,8 @@ window.addEventListener("load", async () => {
 
     let time_old = 0;
 
-    vb.layout.Add(LayoutAttribute.vec2f);
-    vb.layout.Add(LayoutAttribute.vec4f);
+    va.Layout.Add(LayoutAttribute.vec2f);
+    va.Layout.Add(LayoutAttribute.vec4f);
 
     const animate = function(time: number) {
         // let dt = time - time_old;
@@ -70,11 +72,10 @@ window.addEventListener("load", async () => {
 
         shader.Bind();
 
-        vb.Bind();
+        va.Bind();
         ib.Bind();
 
 
-        vb.layout.Apply();
 
         gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0);
 

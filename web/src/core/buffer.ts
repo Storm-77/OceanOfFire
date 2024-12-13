@@ -1,99 +1,18 @@
+import { Logger } from "./logger.js";
 import { gl } from "./setup.js"
-
-export enum LayoutAttribute {
-    none = 0,
-    vec1f,
-    vec2f,
-    vec3f,
-    vec4f
-}
-
-export type WebGlDataFormat = number;
-
-const helper = {
-
-    getAttribType: function(attrib: LayoutAttribute): WebGlDataFormat {
-        const attribTypes = new Map<LayoutAttribute, number>([
-            [LayoutAttribute.vec1f, gl.FLOAT],
-            [LayoutAttribute.vec2f, gl.FLOAT],
-            [LayoutAttribute.vec3f, gl.FLOAT],
-            [LayoutAttribute.vec4f, gl.FLOAT],
-        ]);
-        if (!attribTypes.has(attrib)) {
-            throw new Error("Invalid opengl data attribute")
-        }
-        return attribTypes.get(attrib)!;
-    },
-
-    getSizeOfType: function(type: WebGlDataFormat): number {
-
-        const sizeOfType = new Map<number, number>([
-            [gl.FLOAT, 4]
-        ]);
-
-        if (!sizeOfType.has(type)) {
-            throw new Error("Unsupported opengl data type")
-        }
-        return sizeOfType.get(type)!;
-
-    },
-    getAttribComponentCount: function(attrib: LayoutAttribute): number {
-        const attribComponentCount = new Map<LayoutAttribute, number>([
-            [LayoutAttribute.vec1f, 1],
-            [LayoutAttribute.vec2f, 2],
-            [LayoutAttribute.vec3f, 3],
-            [LayoutAttribute.vec4f, 4],
-        ]);
-        if (!attribComponentCount.has(attrib)) {
-            throw new Error("Unsupported attribute type")
-        }
-        return attribComponentCount.get(attrib)!;
-    }
-
-
-}
-
-
-class VertexLayout {
-
-    private attribs: LayoutAttribute[] = [];
-
-    constructor() {
-        //todo use vertex array
-    }
-
-    public Add(att: LayoutAttribute) {
-        this.attribs.push(att);
-    }
-
-    public Apply(startIdx: number = 0): void {
-
-        let vertexSize = 0;
-        this.attribs.forEach(atr => {
-            vertexSize += helper.getAttribComponentCount(atr) * helper.getSizeOfType(helper.getAttribType(atr));
-        });
-
-        let offset = 0;
-        for (let idx = startIdx; idx < this.attribs.length + startIdx; idx++) {
-            const el = this.attribs[idx - startIdx];
-            const componentCount = helper.getAttribComponentCount(el);
-            const type = helper.getAttribType(el);
-            gl.vertexAttribPointer(idx, componentCount, type, false, vertexSize, offset);
-            offset += componentCount * helper.getSizeOfType(type);
-            gl.enableVertexAttribArray(idx);
-        }
-    }
-
-}
 
 export class VertexBuffer {
 
-    private m_GlBuffer;
-    public layout: VertexLayout;
+    private m_GlBuffer: WebGLBuffer;
 
     constructor() {
-        this.m_GlBuffer = gl.createBuffer();
-        this.layout = new VertexLayout();
+
+        const _glId = gl.createBuffer();
+        if (_glId == null) {
+            Logger.Error("Couldn't create webgl buffer object");
+            throw new Error("Couldn't create webgl buffer object");
+        }
+        this.m_GlBuffer = _glId;
     }
 
     public Bind(): void {
@@ -117,10 +36,15 @@ export class VertexBuffer {
 
 export class IndexBuffer {
 
-    private m_GlBuffer;
+    private m_GlBuffer: WebGLBuffer;
 
     constructor() {
-        this.m_GlBuffer = gl.createBuffer();
+        const _glId = gl.createBuffer();
+        if (_glId == null) {
+            Logger.Error("Couldn't create webgl buffer object");
+            throw new Error("Couldn't create webgl buffer object");
+        }
+        this.m_GlBuffer = _glId;
     }
 
     public Bind(): void {
