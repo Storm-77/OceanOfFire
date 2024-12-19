@@ -64,6 +64,8 @@ export class Shader {
     }
 
     private GetUniformLocation(name: string): WebGLUniformLocation {
+        gl.useProgram(this.m_programId);
+
         if (this.m_uniformLocations.has(name)) {
             return this.m_uniformLocations.get(name)!;
         }

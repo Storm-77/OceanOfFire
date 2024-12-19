@@ -29,7 +29,6 @@ export class Texture2d {
         const srcType = gl.UNSIGNED_BYTE;
         const pixel = new Uint8Array([0, 0, 255, 255]);  // opaque blue
         gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, width, height, border, srcFormat, srcType, pixel);
-        gl.bindTexture(gl.TEXTURE_2D, null);
         // sets placeholder texture
 
         this.m_fn = () => { }
@@ -46,7 +45,6 @@ export class Texture2d {
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
             }
             this.m_fn();
-            gl.bindTexture(gl.TEXTURE_2D, null);
         };
 
     }
