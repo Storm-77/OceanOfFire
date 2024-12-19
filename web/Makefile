@@ -6,5 +6,8 @@ web-build:
 web-watch:
 	cd $(WEB_BASE_DIR) && tsc --watch
 
+web-dev:
+	cd $(WEB_BASE_DIR) && npm run dev
+
 #this makefile handles all tasks related to building and testing frontend part
 

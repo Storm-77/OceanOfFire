@@ -59,8 +59,7 @@ export class Shader {
         gl.deleteProgram(this.m_programId);
     }
 
-    //! TEMP
-    public GetId(): WebGLProgram {
+    public GetGlId(): WebGLProgram {
         return this.m_programId;
     }
 

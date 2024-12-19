@@ -37,6 +37,7 @@ export class VertexBuffer {
 export class IndexBuffer {
 
     private m_GlBuffer: WebGLBuffer;
+    private m_VerticesCount: number;
 
     constructor() {
         const _glId = gl.createBuffer();
@@ -45,6 +46,7 @@ export class IndexBuffer {
             throw new Error("Couldn't create webgl buffer object");
         }
         this.m_GlBuffer = _glId;
+        this.m_VerticesCount = 0;
     }
 
     public Bind(): void {
@@ -56,6 +58,7 @@ export class IndexBuffer {
     }
 
     public UploadData(data: number[]): void {
+        this.m_VerticesCount = data.length;
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.m_GlBuffer);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(data), gl.STATIC_DRAW);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
@@ -63,6 +66,10 @@ export class IndexBuffer {
 
     public Kill(): void {
         gl.deleteBuffer(this.m_GlBuffer);
+    }
+
+    public Count(): number {
+        return this.m_VerticesCount;
     }
 }
 
